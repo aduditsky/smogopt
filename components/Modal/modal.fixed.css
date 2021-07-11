@@ -1,0 +1,5 @@
+.marquee-container,
+.custom-marquee {
+  overflow-x: unset !important;
+  overflow: unset !important;
+}
