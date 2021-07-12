@@ -73,6 +73,7 @@ const NavStyles = styled.nav`
 const Close = styled.button`
   position: absolute;
   right: 15px;
+  cursor: pointer;
   top: 15px;
   width: 40px;
   border: none;

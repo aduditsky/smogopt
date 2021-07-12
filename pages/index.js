@@ -124,7 +124,7 @@ export default function Home() {
         <HeadContainer>
           <LeftPart>
             {/* <img src='/images/logo.svg' alt='Логотип' /> */}
-            <h1>Смог Опт – оптовый поставщик электронных сигарет.</h1>
+            <h1>SmogOpt – оптовый поставщик электронных сигарет.</h1>
           </LeftPart>
           <RightPart>
             <img src='images/hqd/banner.png' alt='Izi - набор' />

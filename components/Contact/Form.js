@@ -101,7 +101,7 @@ function FormComponent() {
   const submitHandler = (e) => {
     e.preventDefault();
 
-    console.log('Sending');
+    // console.log('Sending');
     let form = {
       name,
       email,
@@ -109,25 +109,23 @@ function FormComponent() {
       message,
     };
 
-    console.log(form);
-
-    // fetch('/api/email', {
-    //   method: 'POST',
-    //   headers: {
-    //     Accept: 'application/json, text/plain, */*',
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(form),
-    // }).then((res) => {
-    //   console.log('Response received');
-    //   if (res.status === 200) {
-    //     console.log('Response succeeded!');
-    //     setSubmitted(true);
-    //     setName('');
-    //     setEmail('');
-    //     // setBody('');
-    //   }
-    // });
+    fetch('/api/email', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json, text/plain, */*',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(form),
+    }).then((res) => {
+      // console.log('Response received');
+      if (res.status === 200) {
+        // console.log(`Успешно`);
+        setSubmitted(true);
+        setName('');
+        setEmail('');
+        // setBody('');
+      }
+    });
   };
 
   return (

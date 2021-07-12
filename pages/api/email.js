@@ -12,18 +12,18 @@ export default function (req, res) {
     secure: true,
   });
 
-  const mailData = {
-    from: 'demo@demo.com',
-    to: 'your email',
-    subject: `Message From ${req.body.name}`,
-    text: req.body.message,
-    html: <div>{req.body.message}</div>,
-  };
+  // const mailData = {
+  //   from: 'demo@demo.com',
+  //   to: 'your email',
+  //   subject: `Message From ${req.body.name}`,
+  //   text: req.body.message,
+  //   html: <div>{req.body.message}</div>,
+  // };
 
-  transporter.sendMail(mailData, function (err, info) {
-    if (err) console.log(err);
-    else console.log(info);
-  });
+  // transporter.sendMail(mailData, function (err, info) {
+  //   if (err) console.log(err);
+  //   else console.log(info);
+  // });
 
-  res.status(200);
+  res.status(200).json({ message: 'Успешно!' });
 }

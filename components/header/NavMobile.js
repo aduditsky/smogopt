@@ -5,6 +5,7 @@ import { animated, Transition } from 'react-spring';
 
 const ButtonMenu = styled.button`
   color: #fff;
+  cursor: pointer;
   background: none;
   border: none;
   padding: 0;
