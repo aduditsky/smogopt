@@ -1,167 +1,192 @@
 import styled from 'styled-components';
 import { Section, Container } from '../styles/section.styles';
-import { useState, useMemo, useCallback, useEffect } from 'react';
-import InputMask from 'react-input-mask';
+import { useState, useContext } from 'react';
+import validator from 'validator';
+import { SiteContext } from '../../context/site.context';
+import ModalPolicy from '../ModalPolicy/ModalPolicy';
+import {
+  parsePhoneNumberFromString,
+  isValidPhoneNumber,
+  formatIncompletePhoneNumber,
+} from 'libphonenumber-js';
+import {
+  FormStyles,
+  CheckEmailLabel,
+  InputStyles,
+  SelectStyles,
+  TextAreaStyles,
+  Label,
+  Button,
+  AgreeSpan,
+} from './Form.styles';
 
-const FormStyles = styled.form`
-  display: flex;
-  width: 100%;
-  max-width: 500px;
-  padding: 25px;
-  align-items: flex-start;
-  justify-content: flex-start;
-  flex-direction: column;
-  box-sizing: border-box;
-  label {
-    color: #fff;
-  }
-  h2 {
-    font-family: 'Druk Wide Cyr';
-    font-size: 1.2em;
-    color: #fff;
-  }
-  @media screen and (max-width: 540px) {
-    padding: 10px;
-  }
-`;
-const InputStyles = styled.input`
-  margin-bottom: 10px;
-  width: 100%;
-  min-height: 40px;
-  font-size: 1em;
-  padding: 5px;
-  background-color: transparent;
-  border: none;
-  color: #5f5f5f;
-  border-bottom: 1px solid #5f5f5f;
-  &:focus {
-    color: #efefef;
-    outline: #5f5f5f;
-  }
-`;
+const normalizePhoneNumber = (value) => {
+  const phoneNumber = parsePhoneNumberFromString(value, {
+    defaultCountry: 'RU',
+  });
 
-const InputTelStyles = styled(InputMask)`
-  margin-bottom: 10px;
-  width: 100%;
-  min-height: 40px;
-  font-size: 1em;
-  padding: 5px;
-  background-color: transparent;
-  border: none;
-  color: #5f5f5f;
-  border-bottom: 1px solid #5f5f5f;
-  &:focus {
-    color: #efefef;
-    outline: #5f5f5f;
-  }
-`;
-
-const TextAreaStyles = styled.textarea`
-  margin-bottom: 25px;
-  resize: none;
-  padding: 10px;
-  font-weight: 500;
-  width: 100%;
-  @media screen and (max-width: 540px) {
-    width: 100%;
-    margin: auto;
-  }
-`;
-const Label = styled.label`
-  font-weight: 700;
-  margin: 10px;
-`;
-const Button = styled.input`
-  border: none;
-  color: #fff;
-  margin: 1em 0;
-  padding: 0.9rem 2.5rem;
-  font-size: 1.2rem;
-  border-radius: 2rem;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  background-color: #333;
-  transition: 0.2s ease;
-  &:hover {
-    background-color: #666;
-  }
-`;
+  if (!phoneNumber) return value;
+  return formatIncompletePhoneNumber(phoneNumber.formatNational(), {
+    defaultCountry: 'RU',
+  });
+  // return phoneNumber.formatInternational();
+};
 
 function FormComponent() {
+  const { setModalTel, setModalName } = useContext(SiteContext);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [tel, setTel] = useState('');
+  const [city, setCity] = useState('');
+  const [select, setSelect] = useState('Мелкий опт от 15000');
+
+  const [checkEmail, setCheckEmail] = useState(true);
+  const [checkPhone, setCheckPhone] = useState(true);
 
   const [submitted, setSubmitted] = useState(false);
 
-  const telHandler = (e) => {
-    setTel(e.target.value);
-  };
   const submitHandler = (e) => {
     e.preventDefault();
+    setSubmitted(true);
 
-    // console.log('Sending');
-    let form = {
-      name,
-      email,
-      tel,
-      message,
-    };
+    const ValidateEmail = validator.isEmail(`${email}`);
+    const ValidatePhone = isValidPhoneNumber(tel, 'RU');
+    if (ValidateEmail && ValidatePhone) {
+      setCheckEmail(true);
+      setCheckPhone(true);
+      let form = {
+        name,
+        email,
+        city,
+        tel,
+        message,
+        select,
+      };
 
-    fetch('/api/email', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json, text/plain, */*',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(form),
-    }).then((res) => {
-      // console.log('Response received');
-      if (res.status === 200) {
-        // console.log(`Успешно`);
-        setSubmitted(true);
-        setName('');
-        setEmail('');
-        // setBody('');
+      fetch('/api/email', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json, text/plain, */*',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(form),
+      }).then((res) => {
+        // console.log('Response received');
+        if (res.status === 200) {
+          // console.log(`Успешно`);
+          // Данные для модалки с телеграмом
+          setModalName(name);
+          setModalTel(true);
+          setSubmitted(false);
+          setName('');
+          setCity('');
+          setSelect('');
+          setEmail('');
+          setTel('');
+          setMessage('');
+          // setBody('');
+        }
+      });
+    } else {
+      setSubmitted(false);
+      if (!ValidateEmail) {
+        setCheckEmail(false);
       }
-    });
+      if (!ValidatePhone) {
+        setCheckPhone(false);
+      }
+    }
   };
 
   return (
     <FormStyles onSubmit={submitHandler}>
-      <h2>Хочешь сотрудничать с нами?</h2>
-      <InputStyles
-        type='text'
-        name='name'
-        onChange={(e) => setName(e.target.value)}
-        value={name}
-        placeholder={'Введите имя *'}
-        required
-      ></InputStyles>
-      <InputStyles
-        type='email'
-        name='email'
-        onChange={(e) => setEmail(e.target.value)}
-        value={email}
-        placeholder={'Введите Email *'}
-        required
-      ></InputStyles>
-      <InputTelStyles
-        value={tel}
-        onChange={telHandler}
-        placeholder={'Ваш телефон'}
-        mask='+7 (999) 999-99-99'
-      />
+      <h2>Получите прайс лист!</h2>
+      <span>
+        Заполнив форму Вы получите доступ к WhatsApp аккаунту, где сможете
+        получить прайс лист, ответы на интересующие вопросы и сделать заказ.
+      </span>
+      <label>
+        <InputStyles
+          type='name'
+          name='name'
+          onChange={(e) => setName(e.target.value)}
+          value={name}
+          placeholder={'Введите имя *'}
+          required
+        ></InputStyles>
+      </label>
+      <label>
+        {!checkEmail && (
+          <CheckEmailLabel>Неверный формат email</CheckEmailLabel>
+        )}
+        <InputStyles
+          type='email'
+          name='email'
+          onChange={(e) => setEmail(e.target.value)}
+          value={email}
+          placeholder={'Введите Email *'}
+          required
+        ></InputStyles>
+      </label>
+      <label>
+        <InputStyles
+          type='text'
+          name='city'
+          onChange={(e) => setCity(e.target.value)}
+          value={city}
+          placeholder={'Ваш город *'}
+          required
+        ></InputStyles>
+      </label>
+      <label>
+        {!checkPhone && (
+          <CheckEmailLabel>Телефон заполнен неправильно</CheckEmailLabel>
+        )}
+        <InputStyles
+          id='phoneNumber'
+          type='tel'
+          value={tel}
+          name='telephone'
+          onChange={(event) => {
+            setTel(normalizePhoneNumber(event.target.value));
+          }}
+          placeholder={'Ваш телефон *'}
+        />
+      </label>
+      <label>
+        <SelectStyles
+          value={select}
+          onChange={(e) => setSelect(e.target.value)}
+        >
+          <option value='Мелкий опт от 15000'>Мелкий опт от 15000</option>
+          <option value='Средний опт от 50000'>Средний опт от 50000</option>
+          <option value='Крупный опт от 100000'>Крупный опт от 100000</option>
+          <option value='Предложение по маркетингу и рекламе'>
+            Предложение по маркетингу и рекламе
+          </option>
+          <option value='Заявка на франшизу'>Заявка на франшизу</option>
+        </SelectStyles>
+      </label>
       <TextAreaStyles
         rows='10'
-        placeholder='Коментарии? 🥸'
+        placeholder='Остались вопросы?'
         name='description'
         onChange={(e) => setMessage(e.target.value)}
         value={message}
         required
       ></TextAreaStyles>
-      <Button type='submit' onClick={submitHandler} value='Отправить'></Button>
+      <label style={{ marginTop: 15 }}>
+        <AgreeSpan>
+          Отправляя данные, вы подтверждаете свое согласие с нашей{' '}
+          <ModalPolicy />
+        </AgreeSpan>
+      </label>
+      <Button
+        type='submit'
+        onClick={submitHandler}
+        value={submitted ? 'Подождите' : 'Отправить'}
+      ></Button>
     </FormStyles>
   );
 }
@@ -191,7 +216,7 @@ export default function Form({ grid }) {
     <FormSection grid={grid}>
       <FormContainer>
         <img
-          src='/images/hqd/callback-img.png'
+          src='/images/callback-img.jpg'
           alt='Набор IZI - контактная форма'
         />
       </FormContainer>

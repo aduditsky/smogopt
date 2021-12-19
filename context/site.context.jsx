@@ -3,15 +3,16 @@ import { createContext, useState, useEffect } from 'react';
 export const SiteContext = createContext({
   title: '',
   modalInfo: false,
+  modalTel: false,
+  bodyNoScroll: false,
 });
 
 const SiteProvider = ({ children }) => {
   const [title, setTitle] = useState(`SmogOpt`);
   const [modalInfo, setModalInfo] = useState(false);
-
-  useEffect(() => {
-    document.title = `${title}`;
-  }, [title]);
+  const [modalTel, setModalTel] = useState(false);
+  const [modalName, setModalName] = useState('');
+  const [bodyNoScroll, setScrollBody] = useState(true);
 
   return (
     <SiteContext.Provider
@@ -20,6 +21,12 @@ const SiteProvider = ({ children }) => {
         setTitle,
         modalInfo,
         setModalInfo,
+        modalTel,
+        setModalTel,
+        modalName,
+        setModalName,
+        bodyNoScroll,
+        setScrollBody,
       }}
     >
       {children}

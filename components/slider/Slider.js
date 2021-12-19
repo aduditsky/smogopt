@@ -22,10 +22,10 @@ const SildeContent = styled.div`
   align-items: center;
   background-color: #fff;
   color: #000;
+  ${(props) => props.dummy && 'background-color: #000; color: #fff;'}
   border-radius: 25px;
 
   box-shadow: 0px 6px 11px 1px rgba(34, 60, 80, 0.06);
-  background-image: url('/images/hqd/hqd-king-red-cover.png');
   ${(props) => props.cover && `background-image: url('${props.cover}');`}
 
   background-position: right 15% bottom 10%;
@@ -37,6 +37,7 @@ const SildeContent = styled.div`
     display: flex;
     flex-direction: column;
     padding: 2em;
+    padding-left: 3em;
   }
 
   p,
@@ -74,12 +75,11 @@ export default function Slider() {
   const currentSlides = [
     {
       title: 'HQD Cuvie',
-      cover: '/images/hqd/hqd-cuvie-cover.png',
+      cover: '/images/hqd/hqd-cuvie-cover.jpg',
       description: (
         <ul>
           <li>Пластиковый корпус</li>
           <li>Одноразовый испаритель</li>
-          <li>20 мг солевого никотина</li>
           <li>Хватает на 300 - 400 затяжек</li>
         </ul>
       ),
@@ -132,12 +132,11 @@ export default function Slider() {
     },
     {
       title: 'HQD Maxim',
-      cover: '/images/hqd/hqd-maxim-cover.png',
+      cover: '/images/hqd/hqd-maxim-cover.jpg',
       description: (
         <ul>
           <li>Металлический корпус</li>
           <li>Одноразовый испаритель</li>
-          <li>20 мг солевого никотина</li>
           <li>Хватает на 400 затяжек</li>
         </ul>
       ),
@@ -175,12 +174,11 @@ export default function Slider() {
     },
     {
       title: 'HQD Curve Plus',
-      cover: '/images/hqd/hqd-cuvie-plus-cover.png',
+      cover: '/images/hqd/hqd-cuvie-plus-cover.jpg',
       description: (
         <ul>
           <li>Металлический корпус</li>
           <li>Одноразовый испаритель</li>
-          <li>20 мг солевого никотина</li>
           <li>Хватает до 1200 затяжек</li>
         </ul>
       ),
@@ -224,12 +222,11 @@ export default function Slider() {
     },
     {
       title: 'HQD King',
-      cover: '/images/hqd/hqd-king-red-cover.png',
+      cover: '/images/hqd/hqd-king-red-cover.jpg',
       description: (
         <ul>
           <li>Металлический корпус</li>
           <li>Одноразовый испаритель</li>
-          <li>20 мг солевого никотина</li>
           <li>Хватает на 2000 затяжек</li>
         </ul>
       ),
@@ -282,12 +279,11 @@ export default function Slider() {
     },
     {
       title: 'HQD Rosy',
-      cover: '/images/hqd/hqd-rosy-cover.png',
+      cover: '/images/hqd/hqd-rosy-cover.jpg',
       description: (
         <ul>
           <li>Пластиковый корпус </li>
           <li>Одноразовый испаритель </li>
-          <li>20 мг солевого никотина </li>
           <li>Хватает на 400 - 500 затяжек</li>
         </ul>
       ),
@@ -340,13 +336,21 @@ export default function Slider() {
       ],
     },
     {
+      title: 'МНОГОЕ ДРУГОЕ',
+      dummy: true,
+      description: (
+        <p>
+          Ознакомиться с полным ассортиментом и ценами сможешь у нас в WhatsApp
+        </p>
+      ),
+    },
+    {
       title: 'HQD Mega',
-      cover: '/images/hqd/hqd-mega-cover.png',
+      cover: '/images/hqd/hqd-mega-cover.jpg',
       description: (
         <ul>
           <li>Пластиковый корпус</li>
           <li>Одноразовый испаритель</li>
-          <li>20 мг солевого никотина</li>
           <li>Хватает на 1600 затяжек</li>
         </ul>
       ),
@@ -432,7 +436,7 @@ export default function Slider() {
       >
         {currentSlides.map((slide) => (
           <SwiperSlide key={slide.title}>
-            <SildeContent cover={slide.cover}>
+            <SildeContent dummy={slide.dummy} cover={slide.cover}>
               <div className='slide-body'>
                 <h3>{slide.title}</h3>
                 <Bottom slide={slide} />

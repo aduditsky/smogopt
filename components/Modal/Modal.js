@@ -2,6 +2,7 @@ import * as React from 'react';
 import { BottomModal, ModalTitle, ModalCloseTarget } from 'react-spring-modal';
 import 'react-spring-modal/styles.css';
 import styled from 'styled-components';
+import { CallBackStyles } from '../header/Header';
 // import Marquee from 'react-fast-marquee';
 import MarqueeExt from '../Marquee/index';
 import { Container } from '../styles/section.styles';
@@ -16,10 +17,7 @@ const Button = styled.button`
   border: none;
   color: #fff;
   border-radius: 50%;
-  font-size: 3em;
-  font-weight: 800;
-  font-weight: 300;
-  transform: rotate(45deg);
+  padding: 0;
   background: none;
   color: #000;
   width: fit-content;
@@ -28,6 +26,21 @@ const Button = styled.button`
   position: absolute;
   top: 15px;
   right: 15px;
+  width: 3em;
+  height: 3em;
+  span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    top: 50%;
+    left: 6%;
+    transform-origin: center;
+    transform: rotate(45deg) translate(-50%, -50%) !important; //translate(-50%, -50%)
+    font-size: 3em;
+    font-weight: 800;
+    font-weight: 300;
+    /* transform: rotate(45deg); */
+  }
 `;
 
 const ButtonStart = styled.button`
@@ -87,13 +100,18 @@ const ImgCover = styled.img`
   width: auto;
   bottom: 5%;
   right: 2rem;
+  @media screen and (min-width: 590px) {
+    right: 14%;
+  }
 `;
 
 export function Bottom({ slide }) {
   const [isOpen, setOpen] = React.useState(false);
   return (
     <>
-      <ButtonStart onClick={() => setOpen(true)}>Посмотреть</ButtonStart>
+      <ButtonStart onClick={() => setOpen(true)}>
+        {slide.dummy === true ? `Посмотреть` : `Подробнее`}
+      </ButtonStart>
       <BottomModal
         slide={slide}
         isOpen={isOpen}
@@ -102,37 +120,66 @@ export function Bottom({ slide }) {
         {/* Defaults to <h1> and gives it an id to make it the label for your modal */}
         <Description>
           <FlavorTitle>{slide ? slide.title : 'Заголовок'}</FlavorTitle>
-          {slide ? slide.description : 'Lorem ipsum dolor sit amet.'}
+          {slide ? slide.description : 'Подробности в WhatsApp'}
+          <CallBackStyles
+            to='scroll-contact'
+            spy={true}
+            smooth={true}
+            duration={1000}
+            onClick={() => setOpen(false)}
+            style={{
+              width: 'fit-content',
+              fontSize: '1em',
+              margin: 0,
+              padding: '7px 10px',
+              borderRadius: '25px',
+              border: '2px solid #000',
+            }}
+          >
+            {slide.dummy === true ? `Написать в WhatsApp` : `Получить цены`}
+          </CallBackStyles>
         </Description>
 
         {slide && (
           <>
-            <ImgCover src={slide.cover} alt='silde-cover' />
+            {slide.cover && <ImgCover src={slide.cover} alt='silde-cover' />}
             <FlavorContainer>
-              <h4>Вкусы</h4>
-              {slide.flavor.map((flavor) => (
-                <FlavorItem key={`flavor-${flavor.type}`}>
-                  <FlavorHead>{flavor.type}:</FlavorHead>
-                  <MarqueeExt
-                    className='custom-marquee'
-                    gradient={false}
-                    pauseOnClick
-                    speed={40 + Math.random(-10, 10)}
-                    gradientWidth={30}
-                  >
-                    {flavor.content.map((item) => (
-                      <Flavor key={`Flavor-${item}`}>{item}</Flavor>
-                    ))}
-                  </MarqueeExt>
-                </FlavorItem>
-              ))}
+              {slide.flavor && (
+                <>
+                  <h4>Вкусы</h4>
+                  {slide.flavor.map((flavor) => (
+                    <FlavorItem
+                      key={`flavor-${
+                        Math.random(1, 2142323) + '-' + flavor.type
+                      }`}
+                    >
+                      <FlavorHead>{flavor.type}:</FlavorHead>
+                      <MarqueeExt
+                        className='custom-marquee'
+                        gradient={false}
+                        pauseOnClick
+                        speed={40 + Math.random(-10, 10)}
+                        gradientWidth={30}
+                      >
+                        {flavor.content.map((item) => (
+                          <Flavor key={`Flavor-${flavor.type + '-' + item}`}>
+                            {item}
+                          </Flavor>
+                        ))}
+                      </MarqueeExt>
+                    </FlavorItem>
+                  ))}
+                </>
+              )}
             </FlavorContainer>
           </>
         )}
 
         {/* Automatically adds onClick that dismisses modal */}
         <ModalCloseTarget>
-          <Button>+</Button>
+          <Button>
+            <span>+</span>
+          </Button>
         </ModalCloseTarget>
       </BottomModal>
     </>

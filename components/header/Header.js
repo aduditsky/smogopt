@@ -12,7 +12,7 @@ const LinkStyles = styled(ScrollLink)`
   margin-right: 10px;
 `;
 
-const CallBackStyles = styled(ScrollLink)`
+export const CallBackStyles = styled(ScrollLink)`
   cursor: pointer;
   margin-left: 10px;
   margin-right: 10px;
@@ -47,7 +47,7 @@ const Header = () => {
           <img src='/images/logo.svg' alt='Логотип' />
         </LogoContainer>
         <LinkStyles to='scroll-tastes' spy={true} smooth={true} duration={1000}>
-          Посмотреть вкусы
+          Ассортимент
         </LinkStyles>
         <CallBackStyles
           to='scroll-contact'
